@@ -1,17 +1,12 @@
 ;; turn off emacs startup message
 (setq inhibit-startup-message t)
-;; do not wrap lines
-(setq-default truncate-lines t)
 
-;; tab width as two, using spaces
-(setq default-tab-width 2)
-(setq-default indent-tabs-mode nil)
-
-;; add all subdirs of ~/.emcas.d to your load-path
-(dolist (f (file-expand-wildcards "~/.emacs.d/*"))
-  (add-to-list 'load-path f))
+(custom-set-variables
+ '(menu-bar-mode nil)
+ '(tool-bar-mode nil))
 
 ;; load color-theme
+(add-to-list 'load-path "~/.emacs.d/color-theme")
 (require 'color-theme)
 (color-theme-initialize)
 (setq color-theme-is-global t)
@@ -19,10 +14,37 @@
 (load-file "~/.emacs.d/color-theme/themes/wombat.el")
 (color-theme-wombat)
 
+;; uncomment to not wrap lines
+;;(setq-default truncate-lines t)
+
+;; tab width as two, using spaces
+(setq default-tab-width 2)
+(setq-default indent-tabs-mode nil)
+
+;;; This was installed by package-install.el.
+;;; This provides support for the package system and
+;;; interfacing with ELPA, the package archive.
+;;; Move this code earlier if you want to reference
+;;; packages in your .emacs.
+(when
+    (load
+     (expand-file-name "~/.emacs.d/elpa/package.el"))
+  (package-initialize))
+
+
+;; add all subdirs of ~/.emacs.d to your load-path
+(dolist (f (file-expand-wildcards "~/.emacs.d/*"))
+  (add-to-list 'load-path f))
+
+;; add all subdirs of ~/.emacs.d to your load-path
+(dolist (f (file-expand-wildcards "~/.emacs.d/elpa/*"))
+  (add-to-list 'load-path f))
+
+
 ;; default frame size
-(add-to-list 'default-frame-alist (cons 'height 24))
-(add-to-list 'default-frame-alist (cons 'width 80))
-(add-to-list 'default-frame-alist '(alpha 85 75))
+;(add-to-list 'default-frame-alist (cons 'height 24))
+;(add-to-list 'default-frame-alist (cons 'width 80))
+;(add-to-list 'default-frame-alist '(alpha 85 75))
 
 ;; f5
 (global-set-key [f5] 'revert-buffer)
@@ -59,6 +81,7 @@
 ;; rainbow parentheses
 (require 'highlight-parentheses)
 (add-hook 'clojure-mode-hook '(lambda () (highlight-parentheses-mode 1)))
+;(add-hook 'slime-repl-mode-hook '(lambda () (highlight-parentheses-mode 1)))
 (setq hl-paren-colors
       '("orange1" "yellow1" "greenyellow" "green1"
 	"springgreen1" "cyan1" "slateblue1" "magenta1" "purple"))
@@ -98,7 +121,8 @@
 
 ;;tabbar settings
 (require 'tabbar)
-(set-face-attribute 'tabbar-default    nil :background wombat-gray-1 :font "Monaco")
+;; my Ubuntu ain't got a Monaco font
+(set-face-attribute 'tabbar-default    nil :background wombat-gray-1)
 (set-face-attribute 'tabbar-unselected nil :foreground wombat-bg :box nil)
 (set-face-attribute 'tabbar-selected   nil :background wombat-bg :foreground wombat-gray-1 :box nil)
 (set-face-attribute 'tabbar-highlight  nil :underline t)
@@ -139,4 +163,91 @@
 (autoload 'processing-mode "processing-mode" "Processing mode" t)
 (add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; make emacs use the clipboard
+(setq x-select-enable-clipboard t)
+(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
+
+(defun lein-swank ()
+  (interactive)
+  (let ((root (locate-dominating-file default-directory "project.clj")))
+    (when (not root)
+      (error "Not in a Leiningen project."))
+    ;; you can customize slime-port using .dir-locals.el
+    (shell-command (format "cd %s && lein swank %s &" root slime-port)
+                   "*lein-swank*")
+    (set-process-filter (get-buffer-process "*lein-swank*")
+                        (lambda (process output)
+                          (when (string-match "Connection opened on" output)
+                            (slime-connect "localhost" slime-port)
+                            (set-process-filter process nil))))
+    (message "Starting swank server...")))
+
+(defun override-slime-repl-bindings-with-paredit ()
+  (define-key slime-repl-mode-map
+    (read-kbd-macro paredit-backward-delete-key) nil))
+(add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
+(add-hook 'slime-repl-mode-hook 'clojure-mode-font-lock-setup)
+
+
+(setq eshell-cmpl-cycle-completions t)
+
+;; TODO:
+;;   http://eschulte.github.com/emacs-starter-kit/starter-kit-eshell.html
+;;   eshell-cmpl-cycle-completions
+;; http://www.emacswiki.org/cgi-bin/wiki/minibuffer-complete-cycle.el ido-find-file
+;; http://www.masteringemacs.org/articles/2010/12/13/complete-guide-mastering-eshell/
+;; lambda to char -- from starter kit?
+
+
+;; enable awesome file prompting
+(when (> emacs-major-version 21)
+  (ido-mode t)
+  (setq ido-enable-prefix nil
+        ido-enable-flex-matching t
+        ido-create-new-buffer 'always
+        ido-use-filename-at-point t
+        ido-max-prospects 10))
+
+;; display pretty lambdas
+(font-lock-add-keywords 'emacs-lisp-mode
+    '(("(\\(lambda\\)\\>" (0 (prog1 ()
+                               (compose-region (match-beginning 1)
+                                               (match-end 1)
+                                               ?λ))))))
+
+;; loaded emacs-goodies-el that has bar cursor etc
+
+;; turn off scroll-bars
+(scroll-bar-mode -1)
+
+;; alt -~ enters this, i think
+;;(global-set-key [(f8)] 'slime-selector)
+
+;;; http://dryice.name/blog/emacs/eshell/
+(require 'esh-mode)
+
+;;; http://emacs.wordpress.com/2007/01/28/simple-window-configuration-management/
+;; flip between windo confix, undo/redo style
+(winner-mode 1)
+
+;; https://github.com/nonsequitur/smex/
+;; smex: ido for M-x
+(require 'smex)
+(smex-initialize)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+
+;; imenu
+;; org mode for tables and such, folding
+
+;; http://emacs.wordpress.com/2007/07/15/quick-keybindings/
+
+;; (require 'smooth-scrolling)
+;; emacs tab management?? (how to make good tab groups, view all tree)
+
+;; installed find-file in project
 
