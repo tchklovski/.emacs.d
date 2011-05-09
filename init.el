@@ -7,9 +7,7 @@
 
 ;; load color-theme
 (add-to-list 'load-path "~/.emacs.d/color-theme")
-(require 'color-theme)
-(color-theme-initialize)
-(setq color-theme-is-global t)
+
 ;; use wombat
 (load-file "~/.emacs.d/color-theme/themes/wombat.el")
 (color-theme-wombat)
@@ -20,6 +18,9 @@
 ;; tab width as two, using spaces
 (setq default-tab-width 2)
 (setq-default indent-tabs-mode nil)
+
+;;in your buffer, you can override with
+;; M-: (setq tab-width 8)
 
 ;;; This was installed by package-install.el.
 ;;; This provides support for the package system and
@@ -128,14 +129,14 @@
 (set-face-attribute 'tabbar-selected   nil :background wombat-bg :foreground wombat-gray-1 :box nil)
 (set-face-attribute 'tabbar-highlight  nil :underline t)
 
-(custom-set-variables '(tabbar-separator  '(0)))
-(custom-set-variables '(tabbar-use-images nil))
+;(custom-set-variables '(tabbar-separator  '(0)))
+;(custom-set-variables '(tabbar-use-images nil))
 
 (tabbar-mode 1)
-(global-set-key [C-right] 'tabbar-forward-tab)
-(global-set-key [C-left] 'tabbar-backward-tab)
-(global-set-key [C-up] 'tabbar-forward-group)
-(global-set-key [C-down] 'tabbar-backward-group)
+(global-set-key [C-XF86Forward] 'tabbar-forward-tab)
+(global-set-key [C-XF86Back] 'tabbar-backward-tab)
+(global-set-key [M-XF86Forward] 'tabbar-forward-group)
+(global-set-key [M-XF86Back] 'tabbar-backward-group)
 
 (defadvice tabbar-buffer-tab-label (after tabbar-tab-label activate)
   (setq ad-return-value
@@ -194,13 +195,6 @@
 
 (setq eshell-cmpl-cycle-completions t)
 
-;; TODO:
-;;   http://eschulte.github.com/emacs-starter-kit/starter-kit-eshell.html
-;;   eshell-cmpl-cycle-completions
-;; http://www.emacswiki.org/cgi-bin/wiki/minibuffer-complete-cycle.el ido-find-file
-;; http://www.masteringemacs.org/articles/2010/12/13/complete-guide-mastering-eshell/
-;; lambda to char -- from starter kit?
-
 
 ;; enable awesome file prompting
 (when (> emacs-major-version 21)
@@ -242,13 +236,41 @@
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
+;; quickly get back to your stored configuration
+(global-set-key [(f7)] 'jump-to-register)
+
+;; NAVIGATION
+
+;; window mgmt
+;; config undoing/redoing window changes
+(when (fboundp 'winner-mode)
+      (winner-mode 1)
+      (global-set-key [(XF86Back)] 'winner-undo)
+      (global-set-key [(XF86Forward)] 'winner-redo))
+
+
+;; emacs tab management
+;; http://www.emacswiki.org/emacs/TabBarMode
+
+
+
+;; help with keys
+;; http://www.emacswiki.org/emacs/OneTwoThreeMenu
+;; http://www.emacswiki.org/cgi-bin/emacs/OneKey
+
 ;; imenu
+
 ;; org mode for tables and such, folding
 
 ;; http://emacs.wordpress.com/2007/07/15/quick-keybindings/
 
-;; (require 'smooth-scrolling)
-;; emacs tab management?? (how to make good tab groups, view all tree)
+(require 'smooth-scrolling)
 
+;; http://www.emacswiki.org/emacs/HippieExpand
+;; (global-set-key "\M- " 'hippie-expand)
+
+;; MISC
 ;; installed find-file in project
+;; http://www.masteringemacs.org/articles/2010/12/13/complete-guide-mastering-eshell/
+
 
