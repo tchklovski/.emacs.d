@@ -2,6 +2,11 @@
 (setq inhibit-startup-message t)
 
 (custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(clojure-mode-use-backtracking-indent t)
  '(menu-bar-mode nil)
  '(tool-bar-mode nil))
 
@@ -47,8 +52,10 @@
 ;(add-to-list 'default-frame-alist (cons 'width 80))
 ;(add-to-list 'default-frame-alist '(alpha 85 75))
 
-;; f5
-(global-set-key [f5] 'revert-buffer)
+;; f5 and f7: store your window configuration in register "a" and quickly get back to it
+;; http://www.emacswiki.org/emacs/DedicatedKeys
+(global-set-key [f5] '(lambda () (interactive) (window-configuration-to-register ?a)))
+(global-set-key [f7] '(lambda () (interactive) (jump-to-register ?a)))
 
 ;; load clojure mode
 (require 'clojure-mode)
@@ -77,8 +84,7 @@
 (add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode -1)))
 
 ;; correctly tab defprotocols, etc
-(custom-set-variables
- '(clojure-mode-use-backtracking-indent t))
+
 
 ;; rainbow parentheses
 (require 'highlight-parentheses)
@@ -118,6 +124,9 @@
 (global-set-key (kbd "C-,")        'kmacro-start-macro-or-insert-counter)
 (global-set-key (kbd "C-.")        'kmacro-end-or-call-macro)
 (global-set-key (kbd "<C-return>") 'apply-macro-to-region-lines)
+
+(global-set-key [f9] 'delete-indentation)
+
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
@@ -192,11 +201,20 @@
 (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
 (add-hook 'slime-repl-mode-hook 'clojure-mode-font-lock-setup)
 
+(defun save-compile-and-load-file ()
+  (save-buffer)
+  (slime-compile-and-load-file))
+
+;(add-hook 'clojure-mode-hook
+;'(lambda ()
+;(define-key clojure-mode-map "\C-c\C-k" 'save-compile-and-load-file)))
+(global-set-key [(f11)] '(lambda () (interactive) (bookmark-set "a")))
+(global-set-key [(f12)] '(lambda () (interactive) (bookmark-jump "a")))
 
 (setq eshell-cmpl-cycle-completions t)
 
-
 ;; enable awesome file prompting
+
 (when (> emacs-major-version 21)
   (ido-mode t)
   (setq ido-enable-prefix nil
@@ -236,8 +254,6 @@
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
-;; quickly get back to your stored configuration
-(global-set-key [(f7)] 'jump-to-register)
 
 ;; NAVIGATION
 
@@ -274,3 +290,9 @@
 ;; http://www.masteringemacs.org/articles/2010/12/13/complete-guide-mastering-eshell/
 
 
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ )
