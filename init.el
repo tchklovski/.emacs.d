@@ -9,6 +9,8 @@
  '(clojure-mode-use-backtracking-indent t)
  '(menu-bar-mode nil)
  '(tool-bar-mode nil))
+;(custom-set-variables '(tabbar-separator  '(0)))
+;(custom-set-variables '(tabbar-use-images nil))
 
 ;; load color-theme
 (add-to-list 'load-path "~/.emacs.d/color-theme")
@@ -138,9 +140,6 @@
 (set-face-attribute 'tabbar-selected   nil :background wombat-bg :foreground wombat-gray-1 :box nil)
 (set-face-attribute 'tabbar-highlight  nil :underline t)
 
-;(custom-set-variables '(tabbar-separator  '(0)))
-;(custom-set-variables '(tabbar-use-images nil))
-
 (tabbar-mode 1)
 (global-set-key [C-XF86Forward] 'tabbar-forward-tab)
 (global-set-key [C-XF86Back] 'tabbar-backward-tab)
@@ -202,12 +201,20 @@
 (add-hook 'slime-repl-mode-hook 'clojure-mode-font-lock-setup)
 
 (defun save-compile-and-load-file ()
+  (interactive)
   (save-buffer)
-  (slime-compile-and-load-file))
+  (slime-compile-and-load-file)
+  (other-window 1)
+  (end-of-buffer)
+  (slime-repl-previous-input))
+(add-hook 'slime-mode-hook
+          '(lambda ()
+             (define-key slime-mode-map (kbd "C-c C-k") 'save-compile-and-load-file)))
+;; make ";" be jus a semicolon, not paredit-semicolon
+(add-hook 'paredit-mode-hook
+          '(lambda ()
+             (define-key paredit-mode-map (kbd ";") 'self-insert-command)))
 
-;(add-hook 'clojure-mode-hook
-;'(lambda ()
-;(define-key clojure-mode-map "\C-c\C-k" 'save-compile-and-load-file)))
 (global-set-key [(f11)] '(lambda () (interactive) (bookmark-set "a")))
 (global-set-key [(f12)] '(lambda () (interactive) (bookmark-jump "a")))
 
