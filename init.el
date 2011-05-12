@@ -131,7 +131,7 @@
 ;;macros
 (global-set-key (kbd "C-,")        'kmacro-start-macro-or-insert-counter)
 (global-set-key (kbd "C-.")        'kmacro-end-or-call-macro)
-(global-set-key (kbd "<C-return>") 'apply-macro-to-region-lines)
+;;(global-set-key (kbd "<C-return>") 'apply-macro-to-region-lines)
 
 (global-set-key [f9] 'delete-indentation)
 
@@ -173,6 +173,12 @@
 
 (eval-after-load 'slime-repl-mode
   '(progn (define-key slime-repl-mode-map (kbd "<C-return>") nil)))
+
+(eval-after-load 'slime-mode
+  '(progn (define-key slime-mode-map (kbd "<C-return>") 'slime-eval-defun)))
+
+(eval-after-load 'clojure-mode
+  '(progn (define-key clojure-mode-map (kbd "<C-return>") 'slime-eval-defun)))
 
 
 ;;processing
@@ -229,6 +235,8 @@
 (global-set-key (kbd "<Scroll_Lock>") '(lambda () (interactive) (find-file "~/.emacs.d/init.el")))
 (global-set-key (kbd "C-<Scroll_Lock>") '(lambda () (interactive) (load-file (buffer-file-name))))
 
+
+(global-set-key (kbd "C-<tab>") 'other-window)
 ;; open buffers in another window
 ;; http://www.fnal.gov/docs/products/emacs/emacs/emacs_20.html#SEC156
 
@@ -236,7 +244,8 @@
 
 (defun display-repl ()
   (interactive)
-  (display-buffer "*slime-repl clojure*"))
+  (display-buffer (slime-repl)
+                  (slime-eval-defun)))
 
 ;; enable awesome file prompting
 
