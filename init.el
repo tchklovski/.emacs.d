@@ -54,9 +54,12 @@
 ;(add-to-list 'default-frame-alist (cons 'width 80))
 ;(add-to-list 'default-frame-alist '(alpha 85 75))
 
-;; f5 and f7: store your window configuration in register "a" and quickly get back to it
+;; C-f7 and f7: store your window configuration in register "a" and quickly get back to it
 ;; http://www.emacswiki.org/emacs/DedicatedKeys
-(global-set-key [f5] '(lambda () (interactive) (window-configuration-to-register ?a)))
+(global-set-key (kbd "C-<f7>") '(lambda ()
+                                  (interactive)
+                                  (window-configuration-to-register ?a)
+                                  (message "Stored window config to 'a'...")))
 (global-set-key [f7] '(lambda () (interactive) (jump-to-register ?a)))
 
 ;; load clojure mode
@@ -296,10 +299,17 @@
 ;; installed find-file in project
 ;; http://www.masteringemacs.org/articles/2010/12/13/complete-guide-mastering-eshell/
 
+;; http://emacs-fu.blogspot.com/
+;; eg http://emacs-fu.blogspot.com/2010/11/undo.html -- undo tree sounds  cool
+;; http://www.prodevtips.com/2010/09/24/emacs-key-bindings-paredit-and-saving-macros/
+(global-set-key [f1] 'menu-bar-mode)
 
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- )
+(global-set-key (kbd "C-;") 'paredit-open-parenthesis)
+
+; http://www.math.uh.edu/~bgb/emacs_keys.html
+
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "google-chrome")
+
+;; good tutorial: C-u C-SPC prev mark
+;; http://web.psung.name/emacs/2009/part1.html
