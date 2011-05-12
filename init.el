@@ -20,7 +20,7 @@
 (color-theme-wombat)
 
 ;; uncomment to not wrap lines
-;;(setq-default truncate-lines t)
+(setq-default truncate-lines t)
 
 ;; tab width as two, using spaces
 (setq default-tab-width 2)
@@ -56,11 +56,14 @@
 
 ;; C-f7 and f7: store your window configuration in register "a" and quickly get back to it
 ;; http://www.emacswiki.org/emacs/DedicatedKeys
-(global-set-key (kbd "C-<f7>") '(lambda ()
-                                  (interactive)
-                                  (window-configuration-to-register ?a)
-                                  (message "Stored window config to 'a'...")))
-(global-set-key [f7] '(lambda () (interactive) (jump-to-register ?a)))
+
+(global-set-key (kbd "C-<f7>") 'window-configuration-to-register)
+(global-set-key [f7] 'jump-to-register)
+;; (global-set-key (kbd "C-<f7>") '(lambda ()
+;;                                  (interactive)
+;;                                  (window-configuration-to-register ?a)
+;;                                  (message "Stored window config to 'a'...")))
+;; (global-set-key [f7] '(lambda () (interactive) (jump-to-register ?a)))
 
 ;; load clojure mode
 (require 'clojure-mode)
@@ -218,10 +221,22 @@
           '(lambda ()
              (define-key paredit-mode-map (kbd ";") 'self-insert-command)))
 
-(global-set-key [(f11)] '(lambda () (interactive) (bookmark-set "a")))
-(global-set-key [(f12)] '(lambda () (interactive) (bookmark-jump "a")))
+(global-set-key (kbd "C-<f12>") '(lambda () (interactive) (bookmark-set "a")))
+(global-set-key (kbd "<f12>") '(lambda () (interactive) (bookmark-jump "a")))
+(global-set-key (kbd "M-<f12>") 'bookmark-set)
+(global-set-key (kbd "M-S-<f12>") 'bookmark-jump)
+
+(global-set-key (kbd "<Scroll_Lock>") '(lambda () (interactive) (find-file "~/.emacs.d/init.el")))
+(global-set-key (kbd "C-<Scroll_Lock>") '(lambda () (interactive) (load-file (buffer-file-name))))
+
+;; open buffers in another window
+;; http://www.fnal.gov/docs/products/emacs/emacs/emacs_20.html#SEC156
 
 (setq eshell-cmpl-cycle-completions t)
+
+(defun display-repl ()
+  (interactive)
+  (display-buffer "*slime-repl clojure*"))
 
 ;; enable awesome file prompting
 
