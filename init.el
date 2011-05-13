@@ -237,6 +237,7 @@
 
 
 (global-set-key (kbd "C-<tab>") 'other-window)
+(global-set-key (kbd "C-S-<iso-lefttab>") '(lambda () (interactive) (other-window -1)))
 ;; open buffers in another window
 ;; http://www.fnal.gov/docs/products/emacs/emacs/emacs_20.html#SEC156
 
