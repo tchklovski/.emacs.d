@@ -65,6 +65,23 @@
 ;;                                  (message "Stored window config to 'a'...")))
 ;; (global-set-key [f7] '(lambda () (interactive) (jump-to-register ?a)))
 
+(global-set-key (kbd "C-<XF86Launch7>") '(lambda ()
+                                  (interactive)
+                                  (window-configuration-to-register ?3)
+                                  (message "Stored window config to '3'...")))
+(global-set-key [(XF86Launch7)] '(lambda () (interactive) (jump-to-register ?3)))
+(global-set-key (kbd "C-<XF86Launch8>") '(lambda ()
+                                  (interactive)
+                                  (window-configuration-to-register ?4)
+                                  (message "Stored window config to '4'...")))
+(global-set-key [(XF86Launch8)] '(lambda () (interactive) (jump-to-register ?4)))
+(global-set-key (kbd "C-<XF86Launch9>") '(lambda ()
+                                  (interactive)
+                                  (window-configuration-to-register ?5)
+                                  (message "Stored window config to '5'...")))
+(global-set-key [(XF86Launch9)] '(lambda () (interactive) (jump-to-register ?5)))
+
+
 ;; load clojure mode
 (require 'clojure-mode)
 
@@ -281,10 +298,6 @@
 ;;; http://dryice.name/blog/emacs/eshell/
 (require 'esh-mode)
 
-;;; http://emacs.wordpress.com/2007/01/28/simple-window-configuration-management/
-;; flip between windo confix, undo/redo style
-(winner-mode 1)
-
 ;; https://github.com/nonsequitur/smex/
 ;; smex: ido for M-x
 (require 'smex)
@@ -299,10 +312,14 @@
 
 ;; window mgmt
 ;; config undoing/redoing window changes
+;;; http://emacs.wordpress.com/2007/01/28/simple-window-configuration-management/
+;; flip between windo confix, undo/redo style
 (when (fboundp 'winner-mode)
       (winner-mode 1)
       (global-set-key [(XF86Back)] 'winner-undo)
-      (global-set-key [(XF86Forward)] 'winner-redo))
+      (global-set-key [(XF86Forward)] 'winner-redo)
+      (global-set-key [(XF86Launch5)] 'winner-undo)
+      (global-set-key [(XF86Launch6)] 'winner-redo))
 
 
 ;; emacs tab management
@@ -343,6 +360,8 @@
 
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "google-chrome")
+
+(global-set-key [(XF86Mail)] 'browse-url)
 
 ;; good tutorial: C-u C-SPC prev mark
 ;; http://web.psung.name/emacs/2009/part1.html
