@@ -146,11 +146,17 @@
 (set-face-attribute 'tabbar-selected   nil :background wombat-bg :foreground wombat-gray-1 :box nil)
 (set-face-attribute 'tabbar-highlight  nil :underline t)
 
-(tabbar-mode 1)
-(global-set-key [C-XF86Forward] 'tabbar-forward-tab)
-(global-set-key [C-XF86Back] 'tabbar-backward-tab)
-(global-set-key [M-XF86Forward] 'tabbar-forward-group)
-(global-set-key [M-XF86Back] 'tabbar-backward-group)
+(tabbar-mode -1)
+;(global-set-key [C-XF86Forward] 'tabbar-forward-tab)
+;(global-set-key [C-XF86Back] 'tabbar-backward-tab)
+;(global-set-key [M-XF86Forward] 'tabbar-forward-group)
+;(global-set-key [M-XF86Back] 'tabbar-backward-group)
+(global-set-key [C-XF86Forward] 'forward-sexp)
+(global-set-key [C-XF86Back] 'backward-sexp)
+
+;; swap the two kills:
+;; (global-set-key (kbd "C-M-k") 'paredit-kill)
+;; (global-set-key (kbd "C-k") 'kill-sexp)
 
 (defadvice tabbar-buffer-tab-label (after tabbar-tab-label activate)
   (setq ad-return-value
@@ -216,8 +222,8 @@
   (interactive)
   (save-buffer)
   (slime-compile-and-load-file)
-  (other-window 1)
-  (end-of-buffer)
+  (slime-repl)
+  (goto-char (point-max))
   (slime-repl-previous-input))
 (add-hook 'slime-mode-hook
           '(lambda ()
@@ -234,7 +240,6 @@
 
 (global-set-key (kbd "<Scroll_Lock>") '(lambda () (interactive) (find-file "~/.emacs.d/init.el")))
 (global-set-key (kbd "C-<Scroll_Lock>") '(lambda () (interactive) (load-file (buffer-file-name))))
-
 
 (global-set-key (kbd "C-<tab>") 'other-window)
 (global-set-key (kbd "C-S-<iso-lefttab>") '(lambda () (interactive) (other-window -1)))
@@ -306,6 +311,7 @@
 
 
 ;; help with keys
+;; http://www.cliki.net/Editing%20Lisp%20Code%20with%20Emacs
 ;; http://www.emacswiki.org/emacs/OneTwoThreeMenu
 ;; http://www.emacswiki.org/cgi-bin/emacs/OneKey
 
@@ -331,7 +337,9 @@
 
 (global-set-key (kbd "C-;") 'paredit-open-parenthesis)
 
-; http://www.math.uh.edu/~bgb/emacs_keys.html
+;; keys:
+;; http://www.math.uh.edu/~bgb/emacs_keys.html
+;; http://www.gnu.org/software/emacs/manual/html_node/emacs/Marking-Objects.html
 
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "google-chrome")
