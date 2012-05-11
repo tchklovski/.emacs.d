@@ -220,7 +220,7 @@
     (when (not root)
       (error "Not in a Leiningen project."))
     ;; you can customize slime-port using .dir-locals.el
-    (shell-command (format "cd %s && lein swank %s &" root slime-port)
+    (shell-command (format "source ~/.bashrc && cd %s && lein swank %s &" root slime-port)
                    "*lein-swank*")
     (set-process-filter (get-buffer-process "*lein-swank*")
                         (lambda (process output)
@@ -250,6 +250,9 @@
           '(lambda ()
              (define-key paredit-mode-map (kbd ";") 'self-insert-command)))
 
+(global-set-key [M-mouse-4] 'text-scale-increase)
+(global-set-key [M-mouse-5] 'text-scale-decrease)
+
 (global-set-key (kbd "C-<f12>") '(lambda () (interactive) (bookmark-set "a")))
 (global-set-key (kbd "<f12>") '(lambda () (interactive) (bookmark-jump "a")))
 (global-set-key (kbd "M-<f12>") 'bookmark-set)
@@ -257,6 +260,7 @@
 
 (global-set-key (kbd "<Scroll_Lock>") '(lambda () (interactive) (find-file "~/.emacs.d/init.el")))
 (global-set-key (kbd "C-<Scroll_Lock>") '(lambda () (interactive) (load-file (buffer-file-name))))
+
 
 (global-set-key (kbd "C-<tab>") 'other-window)
 (global-set-key (kbd "C-S-<iso-lefttab>") '(lambda () (interactive) (other-window -1)))
@@ -316,6 +320,9 @@
 ;; flip between windo confix, undo/redo style
 (when (fboundp 'winner-mode)
       (winner-mode 1)
+      (global-set-key [C-prior] 'winner-undo)
+      (global-set-key [C-next] 'winner-redo)
+
       (global-set-key [(XF86Back)] 'winner-undo)
       (global-set-key [(XF86Forward)] 'winner-redo)
       (global-set-key [(XF86Launch5)] 'winner-undo)
